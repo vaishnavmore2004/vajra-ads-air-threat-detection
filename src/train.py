@@ -1,6 +1,6 @@
 """
-VAJRA ADS
-Realistic AI Training Engine V2
+VAJRA ADS V3
+Command Centre AI Training Engine
 """
 
 import logging
@@ -9,265 +9,267 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestClassifier
+
 from sklearn.model_selection import train_test_split
+
 from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    ConfusionMatrixDisplay
+
+accuracy_score,
+
+classification_report,
+
+confusion_matrix,
+
+ConfusionMatrixDisplay
+
 )
 
-# ============================================
+# =======================================
 # Logging
-# ============================================
+# =======================================
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    datefmt="%H:%M:%S"
+
+level=logging.INFO,
+
+format="%(asctime)s | %(levelname)s | %(message)s",
+
+datefmt="%H:%M:%S"
+
 )
 
-log = logging.getLogger()
+log=logging.getLogger()
 
-RANDOM_STATE = 42
+RANDOM_STATE=42
 
-# ============================================
-# Load dataset
-# ============================================
-
-log.info("Loading processed dataset...")
-
-df = pd.read_csv("data/processed_data.csv")
+# =======================================
+# Load data
+# =======================================
 
 log.info(
-    "Loaded %d targets",
-    len(df)
+"Loading processed data..."
 )
 
-# ============================================
-# Required columns
-# ============================================
+df=pd.read_csv(
+"data/processed_data.csv"
+)
 
-required = [
+log.info(
+"Loaded %d tracks",
+len(df)
+)
 
-    "Speed",
-    "Altitude",
-    "Distance",
-    "Direction",
-    "Acceleration",
-    "RadarSignature",
-    "TrajectoryAngle",
-    "ThreatLevel"
-
-]
-
-missing = []
-
-for col in required:
-
-    if col not in df.columns:
-
-        missing.append(col)
-
-if missing:
-
-    raise ValueError(
-        f"Missing columns: {missing}"
-    )
-
-# ============================================
+# =======================================
 # Features
-# ============================================
+# =======================================
 
-FEATURES = [
+FEATURES=[
 
-    "Speed",
+"Speed",
 
-    "Altitude",
+"Altitude",
 
-    "Distance",
+"Distance",
 
-    "Direction",
+"Direction",
 
-    "Acceleration",
+"Acceleration",
 
-    "RadarSignature",
+"RadarSignature",
 
-    "TrajectoryAngle"
+"TrajectoryAngle",
+
+"HeadingAngle",
+
+"TargetSize",
+
+"ElectronicSignature",
+
+"Maneuverability",
+
+"TimeToImpact",
+
+"ApproachScore"
 
 ]
 
-TARGET = "ThreatLevel"
+TARGET="ThreatLevel"
 
-X = df[FEATURES]
+X=df[FEATURES]
 
-y = df[TARGET]
+y=df[TARGET]
 
-# ============================================
-# Train Test Split
-# ============================================
+# =======================================
+# Split
+# =======================================
 
-X_train, X_test, y_train, y_test = train_test_split(
+X_train,\
+X_test,\
+y_train,\
+y_test=\
+train_test_split(
 
-    X,
+X,
 
-    y,
+y,
 
-    test_size=0.2,
+test_size=0.2,
 
-    random_state=RANDOM_STATE,
+random_state=RANDOM_STATE,
 
-    stratify=y
+stratify=y
 
 )
 
 log.info(
-    "Training samples: %d",
-    len(X_train)
+"Training samples: %d",
+len(X_train)
 )
 
 log.info(
-    "Testing samples: %d",
-    len(X_test)
+"Testing samples: %d",
+len(X_test)
 )
 
-# ============================================
+# =======================================
 # Model
-# ============================================
+# =======================================
 
-model = RandomForestClassifier(
+model=RandomForestClassifier(
 
-    n_estimators=300,
+n_estimators=400,
 
-    max_depth=12,
+max_depth=14,
 
-    min_samples_split=5,
+min_samples_split=5,
 
-    min_samples_leaf=2,
+min_samples_leaf=2,
 
-    class_weight="balanced",
+class_weight="balanced",
 
-    random_state=RANDOM_STATE,
+n_jobs=-1,
 
-    n_jobs=-1
+random_state=RANDOM_STATE
+
 )
 
 log.info(
-    "Training VAJRA AI..."
+"Training VAJRA AI..."
 )
 
 model.fit(
-    X_train,
-    y_train
+X_train,
+y_train
 )
 
-# ============================================
-# Prediction
-# ============================================
+# =======================================
+# Predict
+# =======================================
 
-predictions = model.predict(
-    X_test
+pred=model.predict(
+X_test
 )
 
-accuracy = accuracy_score(
-    y_test,
-    predictions
+accuracy=accuracy_score(
+y_test,
+pred
 )
 
 print("\n")
 print("="*50)
-print("VAJRA AI RESULTS")
+
+print(
+"VAJRA COMMAND AI RESULTS"
+)
+
 print("="*50)
 
 print(
-    f"\nAccuracy: {accuracy:.4f}"
+f"\nAccuracy:{accuracy:.4f}"
 )
 
 print(
-    "\nClassification Report:\n"
+"\nClassification Report:\n"
 )
 
 print(
-    classification_report(
-        y_test,
-        predictions
-    )
+classification_report(
+y_test,
+pred
+)
 )
 
-# ============================================
-# Feature Importance
-# ============================================
+# =======================================
+# Importance
+# =======================================
 
-importance = pd.DataFrame({
+importance=pd.DataFrame({
 
-    "Feature": FEATURES,
+"Feature":
+FEATURES,
 
-    "Importance":
-    model.feature_importances_
+"Importance":
+model.feature_importances_
 
 })
 
-importance = importance.sort_values(
+importance=\
+importance.sort_values(
 
-    by="Importance",
+by="Importance",
 
-    ascending=False
+ascending=False
 
 )
 
 print(
-    "\nFeature Importance:\n"
+"\nFeature Importance:\n"
 )
 
 print(
-    importance.to_string(
-        index=False
-    )
+importance.to_string(
+index=False
+)
 )
 
-# ============================================
+# =======================================
 # Confusion Matrix
-# ============================================
+# =======================================
 
-cm = confusion_matrix(
-    y_test,
-    predictions
+cm=confusion_matrix(
+y_test,
+pred
 )
 
-disp = ConfusionMatrixDisplay(
-    confusion_matrix=cm
+disp=\
+ConfusionMatrixDisplay(
+confusion_matrix=cm
 )
 
 disp.plot()
 
 plt.title(
-    "VAJRA Threat Confusion Matrix"
+"VAJRA Command AI Matrix"
 )
 
-# save graph too
 plt.savefig(
-    "models/confusion_matrix.png"
+"models/confusion_matrix.png"
 )
 
 plt.show()
 
-# ============================================
-# Save model
-# ============================================
+# =======================================
+# Save
+# =======================================
 
 joblib.dump(
-    model,
-    "models/vajra_model.pkl"
+
+model,
+
+"models/vajra_model.pkl"
+
 )
 
 log.info(
-    "Model saved successfully"
-)
-
-print(
-    "\nSaved:"
-)
-
-print(
-    "models/vajra_model.pkl"
+"VAJRA AI saved"
 )
